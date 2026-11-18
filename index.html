@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#101820">
+<title>المحقق الأخير</title>
+<style>
+:root{--bg:#101820;--panel:#192631;--gold:#e6b85c;--text:#f4f1e8;--muted:#b8c2c9;--good:#72c58a}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#263b49,var(--bg) 58%);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+header{padding:22px 18px 14px;text-align:center;border-bottom:1px solid #ffffff20}
+.kicker{color:var(--gold);font-size:12px;letter-spacing:2px}
+h1{font-size:29px;margin:8px 0 4px} .sub{color:var(--muted);font-size:13px}
+main{max-width:720px;margin:auto;padding:16px}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill{background:#ffffff12;border:1px solid #ffffff20;border-radius:30px;padding:8px 12px;font-size:12px;color:var(--muted)}
+.scene{background:linear-gradient(145deg,#314958,#172630);border:1px solid #ffffff25;border-radius:18px;min-height:190px;padding:18px;position:relative;overflow:hidden}
+.scene:after{content:"";position:absolute;left:-35px;bottom:-75px;width:210px;height:210px;border:1px solid #ffffff18;border-radius:50%;box-shadow:0 0 0 22px #ffffff08,0 0 0 48px #ffffff05}
+.scene-icon{font-size:52px;margin-bottom:8px}
+.scene h2{margin:4px 0 8px;font-size:20px}.scene p{color:#d5dee2;line-height:1.7;margin:0;max-width:90%}
+.card{background:var(--panel);border:1px solid #ffffff20;border-radius:16px;padding:16px;margin-top:14px}
+.card h3{margin:0 0 10px;color:var(--gold);font-size:16px}
+.actions{display:grid;gap:9px;margin-top:14px}
+button{font:inherit;border:0;border-radius:12px;padding:13px 14px;background:#314958;color:var(--text);text-align:right;cursor:pointer;border:1px solid #ffffff20}
+button.primary{background:var(--gold);color:#1b2024;font-weight:bold;text-align:center}
+button:active{transform:scale(.99)}
+.clue{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff12;color:var(--muted)}
+.clue:last-child{border:0}.clue span:first-child{font-size:22px}
+.note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px}
+#feedback{min-height:24px;color:var(--good);margin-top:10px;font-size:13px}
+footer{text-align:center;color:#82919b;font-size:11px;padding:20px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+ <div class="kicker">قضية رقم 001 · ملف سري</div>
+ <h1>المحقق الأخير</h1>
+ <div class="sub">لعبة ألغاز بوليسية · النسخة التجريبية الأولى</div>
+</header>
+<main>
+ <div class="status">
+  <div class="pill">🕵️ المحقق: أنت</div><div class="pill">📍 المكان: فيلا النخيل</div><div class="pill" id="clueCount">🔎 الأدلة: 0 / 3</div>
+ </div>
+ <section class="scene">
+  <div class="scene-icon" id="sceneIcon">🏚️</div>
+  <h2 id="sceneTitle">اختفاء في ليلة ممطرة</h2>
+  <p id="sceneText">اختفى صاحب الفيلا، رجل الأعمال فؤاد سالم، قبل منتصف الليل. وصلتَ إلى المكان لتعرف ما حدث. فتّش الغرف واجمع الأدلة، ثم اختر المشتبه به.</p>
+ </section>
+ <section class="card" id="explore">
+  <h3>اختر مكانًا للتحقيق</h3>
+  <div class="actions">
+   <button onclick="investigate('desk')">🗄️ المكتب — درج مفتوح وأوراق مبعثرة</button>
+   <button onclick="investigate('window')">🪟 النافذة — آثار طين قرب الستارة</button>
+   <button onclick="investigate('clock')">🕰️ ساعة الحائط — توقفت عند وقت غريب</button>
+  </div>
+  <div id="feedback"></div>
+ </section>
+ <section class="card">
+  <h3>دفتر الأدلة</h3>
+  <div id="clues"><div class="clue"><span>📓</span><span>لم تجمع أي دليل بعد. ابدأ بتفتيش الفيلا.</span></div></div>
+ </section>
+ <section class="card hidden" id="accuse">
+  <h3>وصلت إلى لحظة الاتهام</h3>
+  <p class="note">بعد جمع الأدلة الثلاثة، من تعتقد أنه أخذ فؤاد سالم؟</p>
+  <div class="actions">
+   <button onclick="accuse('حارس الفيلا')">👮 حارس الفيلا</button>
+   <button onclick="accuse('مدير الأعمال')">💼 مدير الأعمال</button>
+   <button onclick="accuse('ابن أخيه')">🧥 ابن أخيه</button>
+  </div>
+  <div id="ending"></div>
+ </section>
+ <footer>نسخة تجريبية خفيفة تعمل على متصفح أندرويد — سيتم تطويرها بإضافة مراحل ورسوم أفضل.</footer>
+</main>
+<script>
+const evidence = {
+ desk:{icon:"🗄️",title:"المكتب",text:"وجدت رسالة ممزقة تشير إلى تحويل أموال سري. على الورقة أثر حبر أزرق، وهو نفس لون قلم مدير الأعمال.",clue:"رسالة التحويل المالي — تربط القضية بمدير الأعمال."},
+ window:{icon:"🪟",title:"النافذة الخلفية",text:"آثار الطين تبدأ من الحديقة وتنتهي عند النافذة. بجانبها زرّ معطف أسود يبدو أنه سقط أثناء الدخول.",clue:"زر معطف أسود — قد يخص شخصًا من داخل الفيلا."},
+ clock:{icon:"🕰️",title:"ساعة الحائط",text:"الساعة متوقفة عند 11:20. لكن سجل الحارس يثبت أنه سمع صوتًا في 11:40، إذن أحدهما يكذب.",clue:"توقيت متناقض — شهادة الحارس غير مؤكدة."}
+};
+let found=[];
+function investigate(key){
+ const e=evidence[key];
+ document.getElementById("sceneIcon").textContent=e.icon;
+ document.getElementById("sceneTitle").textContent=e.title;
+ document.getElementById("sceneText").textContent=e.text;
+ const fb=document.getElementById("feedback");
+ if(found.includes(key)){fb.textContent="هذا الدليل موجود بالفعل في دفتر الأدلة.";return;}
+ found.push(key);
+ document.getElementById("clueCount").textContent=`🔎 الأدلة: ${found.length} / 3`;
+ const item=document.createElement("div");item.className="clue";item.innerHTML=`<span>🧩</span><span>${e.clue}</span>`;
+ document.getElementById("clues").appendChild(item);
+ fb.textContent="تم تسجيل دليل جديد في دفتر التحقيق.";
+ if(found.length===3){document.getElementById("accuse").classList.remove("hidden");fb.textContent="جمعت كل الأدلة! راجعها ثم اختر المتهم.";}
+}
+function accuse(name){
+ const out=document.getElementById("ending");
+ if(name==="مدير الأعمال"){
+  out.innerHTML='<p style="color:#72c58a;line-height:1.8">أحسنت! 🎉 الأدلة تكشف أن مدير الأعمال دبّر الاختفاء لإخفاء تحويل الأموال. انتهت القضية الأولى بنجاح!</p><button class="primary" onclick="location.reload()">العب القضية من جديد</button>';
+ }else{
+  out.innerHTML=`<p style="color:#e6b85c;line-height:1.8">اتهام غير صحيح. راجع الأدلة: الرسالة ذات الحبر الأزرق وتناقض التوقيت يقودان إلى مدير الأعمال.</p><button onclick="accuse('مدير الأعمال')">إعادة فحص الأدلة</button>`;
+ }
+}
+</script>
+</body>
+</html>
